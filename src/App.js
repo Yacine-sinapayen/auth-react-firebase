@@ -1,10 +1,15 @@
-import './App.css';
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import NavBar from "./components/NavBar";
 
 function App() {
   return (
-    <div className="App">
-    <h1 className="display-1">test boost</h1>
-    </div>
+    <>
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </>
   );
 }
 
