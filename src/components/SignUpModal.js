@@ -1,11 +1,13 @@
 import React, { useContext, useRef, useState } from "react";
 import { UserContext } from "../context/userContext";
+import { useNavigate } from "react-router-dom";
 
 export default function SignUpModal() {
   // Je récupère modalState et ma méthode toggleModals depuis le contexte "UserContext.js"
   const { modalState, toggleModals, signUp } = useContext(UserContext);
 
-  // console.log(signUp)
+  // À chaque fois que l'on récupère des hooks de react router dom il faut les instancier
+  const navigate = useNavigate();
 
   // State du msg de validation que je passe à mon <p> "text-danger"
   const [validation, setValidation] = useState(" ");
@@ -49,16 +51,21 @@ export default function SignUpModal() {
       );
       //  reset les inputs du form
       formRef.current.reset();
+      // 
       setValidation("");
-      console.log(cred);
+      // console.log(cred);
+      // je ferme ma modal
+      toggleModals("close")
+      // route vers laquelle je redirige le user si la connexion et validée
+      navigate("/private/private-home");
     } catch (err) {
       // Gestion des msg d'erreur en fonction de la res côté server firebase
-      if(err.code === "auth/invalid-email"){
-        setValidation("Email format invalid")
+      if (err.code === "auth/invalid-email") {
+        setValidation("Email format invalid");
       }
 
-      if(err.code === "auth/email-already-in-use"){
-        setValidation("Email already used")
+      if (err.code === "auth/email-already-in-use") {
+        setValidation("Email already used");
       }
     }
   };
@@ -67,8 +74,7 @@ export default function SignUpModal() {
   const closeModal = () => {
     setValidation("");
     toggleModals("close");
-  }
-
+  };
 
   return (
     <>
