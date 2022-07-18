@@ -3,7 +3,9 @@ import { UserContext } from "../context/userContext";
 
 export default function SignUpModal() {
   // Je récupère modalState et ma méthode toggleModals depuis le contexte "UserContext.js"
-  const { modalState, toggleModals } = useContext(UserContext);
+  const { modalState, toggleModals, signUp } = useContext(UserContext);
+
+  // console.log(signUp)
 
   // State du msg de validation que je passe à mon <p> "text-danger"
   const [validation, setValidation] = useState(" ")
@@ -16,7 +18,9 @@ export default function SignUpModal() {
     }
   };
 
-  const handleForm = e => {
+  const formRef = useRef()
+
+  const handleForm = async (e) => {
     e.preventDefault()
 
     // Ce log nous renvoie un objet avec une propriété current à l'intérieur de laquelle il y a mon tableau d'inputs. Les refs de mes inputs récupèrent les values et les insèrent dans un tableau
@@ -34,6 +38,20 @@ export default function SignUpModal() {
     {
       setValidation("Passwords do not match")
       return;
+    };
+
+    // Inscription côté server Firebase
+    try {
+      const cred = await signUp(
+        inputs.current[0].value,
+        inputs.current[1].value
+      )
+      //  reset les inputs du form
+      formRef.current.reset();
+      setValidation("");
+      console.log(cred)
+    }catch(err){
+
     }
   };
 
@@ -63,8 +81,11 @@ export default function SignUpModal() {
 
                 <div className="modal-body">
                   <form 
+                  className="sign-up-form"
                   onSubmit={handleForm}
-                  className="sign-up-form">
+                  // ce ref vide les inputs 
+                  ref={formRef}
+                  >
                     <div className="mb-3">
                       <label htmlFor="signUpEmail" className="form-label">
                         Email adress
