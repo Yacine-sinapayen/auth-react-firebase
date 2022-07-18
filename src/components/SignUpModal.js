@@ -1,9 +1,41 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { UserContext } from "../context/userContext";
 
 export default function SignUpModal() {
   // Je récupère modalState et ma méthode toggleModals depuis le contexte "UserContext.js"
   const { modalState, toggleModals } = useContext(UserContext);
+
+  // State du msg de validation que je passe à mon <p> "text-danger"
+  const [validation, setValidation] = useState(" ")
+
+  const inputs = useRef([]);
+  const addInputs = (el) => {
+    // Si el existe et qu'il n'est pas déjà dans mon tableau "useRef([])", alors je l'y rajoute
+    if (el && !inputs.current.includes(el)) {
+      inputs.current.push(el);
+    }
+  };
+
+  const handleForm = e => {
+    e.preventDefault()
+
+    // Ce log nous renvoie un objet avec une propriété current à l'intérieur de laquelle il y a mon tableau d'inputs. Les refs de mes inputs récupèrent les values et les insèrent dans un tableau
+    // console.log(inputs);
+
+    // Validation données coté front
+    // Validation de la longueur du mdp en ciblant les champs 1 et 2 de mon tableau de ref qui correspondent aux deux derniers champs de mon form
+    if((inputs.current[1].value.length || inputs.current[2].value.length) < 6 ){
+      setValidation("6 characters minimum please");
+      // Je sors de la fonction avec un : 
+      return;
+    }
+    // On vérifie que les deux mpd soient identiques
+    else if (inputs.current[1].value !== inputs.current[2].value)
+    {
+      setValidation("Passwords do not match")
+      return;
+    }
+  };
 
   return (
     <>
@@ -30,12 +62,16 @@ export default function SignUpModal() {
                 </div>
 
                 <div className="modal-body">
-                  <form className="sign-up-form">
+                  <form 
+                  onSubmit={handleForm}
+                  className="sign-up-form">
                     <div className="mb-3">
                       <label htmlFor="signUpEmail" className="form-label">
                         Email adress
                       </label>
                       <input
+                        // Méthode qui  est exécutée à chaque ajout d'un input
+                        ref={addInputs}
                         name="email"
                         required
                         type="email"
@@ -49,6 +85,8 @@ export default function SignUpModal() {
                         Password
                       </label>
                       <input
+                        // Méthode qui  est exécutée à chaque ajout d'un input
+                        ref={addInputs}
                         name="pwd"
                         required
                         type="password"
@@ -62,13 +100,15 @@ export default function SignUpModal() {
                         Repeat Password
                       </label>
                       <input
+                        // Méthode qui  est exécutée à chaque ajout d'un input
+                        ref={addInputs}
                         name="pwd"
                         required
                         type="password"
                         className="form-control"
                         id="repeatPwd"
                       />
-                      <p className="text-danger mt-1"></p>
+                      <p className="text-danger mt-1">{validation}</p>
                     </div>
 
                     <button className="btn btn-primary">Submit</button>
