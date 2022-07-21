@@ -17,6 +17,10 @@ export function UserContextProvider(props) {
   const signUp = (email, pwd) =>
     createUserWithEmailAndPassword(auth, email, pwd);
 
+  // signIn nous permet de nous connecter
+  const signIn = (email, pwd) =>
+  signInWithEmailAndPassword(auth, email, pwd);
+
   const [currentUser, setCurrentUser] = useState();
   // Le temps que je reçoive une réponse depuis firebase je vais utiliser une variable
   const [loadingData, setLoadingdata] = useState(true);
@@ -62,7 +66,7 @@ export function UserContextProvider(props) {
   };
 
   return (
-    <UserContext.Provider value={{ modalState, toggleModals, signUp, currentUser }}>
+    <UserContext.Provider value={{ modalState, toggleModals, signUp, signIn, currentUser  }}>
       {!loadingData && props.children}
     </UserContext.Provider>
   );
